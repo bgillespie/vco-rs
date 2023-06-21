@@ -9,6 +9,8 @@ use crate::client::*;
 use crate::error::*;
 
 impl Client {
+    /// Get the status metrics for a VCG.
+    /// TODO accept and return types not coming directly from whichever underlying API crate.
     pub async fn get_gateway_status_metrics(
         &self,
         gateway_id: Integer,
@@ -30,17 +32,20 @@ impl Client {
         let resp = self
             .post_with_payload("/metrics/getGatewayStatusMetrics", &body)
             .await?;
-        Ok(serde_json::de::from_str(&resp).map_err(ClientError::Json)?)
+        Ok(resp)
     }
 
-    // TODO `/network/getNetworkGateways` allow passing in `with` params:
-    //      {"with":["site","roles","pools","dataCenters","certificates","enterprises","handOffEdges","enterpriseAssociationCounts"]}
+    /// Get a list of all the network gateways, AKA "VCGs".
+    /// TODO return some type not coming directly from whichever underlying API crate.
+    /// TODO `/network/getNetworkGateways` allow passing in `with` params:
+    ///      `{"with":["site","roles","pools","dataCenters","certificates","enterprises",
+    ///                "handOffEdges","enterpriseAssociationCounts"]}`
     pub async fn get_network_gateways(
         &self,
     ) -> Result<Vec<NetworkGetNetworkGatewaysResultItem>, ClientError> {
         let resp = self
             .post_without_payload("network/getNetworkGateways")
             .await?;
-        Ok(serde_json::de::from_str(&resp).map_err(ClientError::Json)?)
+        Ok(resp)
     }
 }

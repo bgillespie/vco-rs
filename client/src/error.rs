@@ -7,6 +7,9 @@ use api_v1::Integer;
 #[derive(Error, Debug)]
 #[non_exhaustive]
 pub enum ClientError {
+    #[error("Bad VCO FQDN: {0:?}")]
+    BadVcoFqdn(String),
+
     #[error("Error making request: {0:?}")]
     Request(RequestError),
 
@@ -23,11 +26,16 @@ pub enum ClientError {
     Json(serde_json::Error),
 }
 
+/// `Error`, `ErrorData` and `ErrorValidationDetails` are used to deserialize errors returned from
+/// the API.
+/// TODO: move these to `api_v1`.
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Error {
     pub code: Integer,
     pub message: String,
+    #[serde(flatten)]
+    pub the_rest: serde_json::Map<String, serde_json::Value>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

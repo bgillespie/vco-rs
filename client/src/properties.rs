@@ -44,7 +44,7 @@ impl Client {
         let resp = self
             .post_without_payload("systemProperty/getSystemProperties")
             .await?;
-        Ok(serde_json::de::from_str(&resp).map_err(ClientError::Json)?)
+        Ok(resp)
     }
 
     /// Gets the system properties, converting the result to a mapping by property name.
